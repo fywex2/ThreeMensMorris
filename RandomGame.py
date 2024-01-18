@@ -112,7 +112,7 @@ class ThreeMensMorris:
         self.rank_board_state()
         self.num_moves += 1
 
-
+    # TODO: fix this, there is no 1s
     def smart_agent_turn(self):
         max_score = -1
         max_location = (0, 0)
