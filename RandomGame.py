@@ -121,7 +121,11 @@ class ThreeMensMorris:
             if self.board[i][j] == 0:
                 temp_board = self.board
                 temp_board[i][j] = 2
+                str_board = flatten_list(self.board)
 
+                if max_score < existing_data[str_board][0]:
+                    max_score = existing_data[str_board][0]
+                    max_location = (i, j)
 
         self.board[max_location[0]][max_location[1]] = 2
 
@@ -137,7 +141,7 @@ class ThreeMensMorris:
             rank = self.win_points_agent
 
         rank = float(rank)
-        states.append(flatten_3x3_list(self.board))
+        states.append(flatten_list(self.board))
         states_scores.append(rank)
 
 class Games:
@@ -154,7 +158,7 @@ class Games:
                 self.tmm.opp_turn()
                 turn = 2
             else:
-                self.tmm.agent_turn()
+                self.tmm.smart_agent_turn()
                 turn = 1
 
     def multiply_games(self):
