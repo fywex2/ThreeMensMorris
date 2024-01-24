@@ -16,8 +16,8 @@ def flatten_list(list):
         flat_list.extend(row)
     return "".join(str(element) for element in flat_list)
 
+# we will play the game of three men's morris as an agent (2), the opponent will be (1)
 class ThreeMensMorris:
-    # we will play as an agent (2), the opponnent will be (1)
 
     def __init__(self):
         self.board = [[0, 0, 0],
@@ -43,19 +43,21 @@ class ThreeMensMorris:
         }
         self.num_moves = 0
 
-    # returns a list of the legal places in the board (as tupples)
+    # returns a list of the legal places in the board (as tuples)
     def legal_phase1(self):
         return [(row, col) for row in range(3) for col in range(3) if self.board[row][col] == 0]
 
+    # Define neighboring positions
     def legal_phase2(self, position):
-        # Define neighboring positions
         row, col = position
         legal = self.phase2_close[row, col]
         return [(row, col) for (row, col) in legal if self.board[row][col] == 0]
 
+    # agent pieces on the board
     def agent_pieces(self):
         return [(row, col) for row in range(3) for col in range(3) if self.board[row][col] == 2]
 
+    # opponent pieces on the board
     def opp_pieces(self):
         return [(row, col) for row in range(3) for col in range(3) if self.board[row][col] == 1]
 
@@ -78,6 +80,7 @@ class ThreeMensMorris:
 
         return 0  # No winner yet
 
+    # the turn of the agent in the game
     def agent_turn(self):
         if self.num_agent_pieces > 0:
             row, col = random.choice(self.legal_phase1())
@@ -95,6 +98,7 @@ class ThreeMensMorris:
         self.rank_board_state()
         self.num_moves += 1
 
+    # the turn of the opponent in the game
     def opp_turn(self):
         if self.num_opp_pieces > 0:
             row, col = random.choice(self.legal_phase1())
@@ -112,27 +116,42 @@ class ThreeMensMorris:
         self.rank_board_state()
         self.num_moves += 1
 
-    # TODO: fix this, there is no 1s
+    # smart agent turn using the dictionary
     def smart_agent_turn(self):
         max_score = -1
-        max_location = (0, 0)
+        max_location = ((0, 0), (0, 0))
 
-        for i, j in itertools.product(range(3), range(3)):
-            if self.board[i][j] == 0:
-                temp_board = self.board
-                temp_board[i][j] = 2
-                str_board = flatten_list(self.board)
+        if self.num_agent_pieces > 0:
+            for i, j in itertools.product(range(3), range(3)):
+                if self.board[i][j] == 0:
+                    temp_board = copy.deepcopy(self.board)
+                    temp_board[i][j] = 2
+                    str_board = flatten_list(temp_board)
 
-                if max_score < existing_data[str_board][0]:
-                    max_score = existing_data[str_board][0]
-                    max_location = (i, j)
+                    if max_score < existing_data[str_board][0]:
+                        max_score = existing_data[str_board][0]
+                        max_location = ((i, j), (0, 0))
+            self.num_agent_pieces -= 1
 
-        self.board[max_location[0]][max_location[1]] = 2
+            self.board[max_location[0][0]][max_location[0][1]] = 2
 
-    # manages the game from start to finish
+        else:
+            for i, j in itertools.product(range(3), range(3)):
+                if self.board[i][j] == 2:
+                    for c in range(len(self.phase2_close[i, j])):
+                        temp_board = copy.deepcopy(self.board)
+                        row, col = self.phase2_close[i, j][c]
+                        if self.board[row][col] == 0:
+                            temp_board[i][j] = 0
+                            temp_board[row][col] = 2
+                            str_board = flatten_list(temp_board)
+                            if max_score < existing_data[str_board][0]:
+                                max_score = existing_data[str_board][0]
+                                max_location = ((i, j), (row, col))
+            self.board[max_location[0][0]][max_location[0][1]] = 0
+            self.board[max_location[1][0]][max_location[1][1]] = 2
 
-    # the def will give points to every board in this game
-    # every list will have 2 cell of the board and the points the board got in the game
+    # ranking all the boards in the game
     def rank_board_state(self):
         rank = self.gama ** self.num_moves
         if self.is_win() == 1:
@@ -145,6 +164,7 @@ class ThreeMensMorris:
         states_scores.append(rank)
 
 class Games:
+
     def __init__(self):
         self.agent_win_amount = 0
         self.opp_win_amount = 0
@@ -191,8 +211,8 @@ games = Games()
 
 dict_result = games.multiply_games()
 final_dict = dict(existing_data, **dict_result)
-with open("dict.json", "w") as fp:
-    json.dump(final_dict, fp)
+#with open("dict.json", "w") as fp:
+#    json.dump(final_dict, fp)
 
 print(f"agent wins:{games.agent_win_amount}")
 print(f"opponent wins:{games.opp_win_amount}")
