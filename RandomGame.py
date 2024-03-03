@@ -7,15 +7,17 @@ import numpy as np
 import json
 import copy
 
-# storing the dictionary in a variable
+"""# storing the dictionary in a variable
 with open("dict.json", 'r') as fp:
     existing_data = json.load(fp)
 with open("dict2.json", 'r') as fp:
-    existing_data2 = json.load(fp)
+    existing_data2 = json.load(fp)"""
 
 # saving all the boards in the game and their scores
 states = []
 states_scores = []
+last_board = []
+who_won = []
 
 # flattening the list to a string
 def flatten_list(list):
@@ -217,47 +219,48 @@ class Games:
     def __init__(self):
         self.agent_win_amount = 0  # amount of agent wins
         self.opp_win_amount = 0  # amount of opp wins
-        self.amount_games = 10000  # amount of games to run
+        self.amount_games = 1000000  # amount of games to run
         self.tmm = ThreeMensMorris()  # the variable of the game
 
     # run a single game
     def play_game(self):
         turn = self.tmm.starts_first
-        if self.tmm.starts_first == 1:
-            while self.tmm.is_win() == 0:
-                if turn == 1:
-                    self.tmm.smart_opp_turn()
-                    turn = 2
-                else:
-                    self.tmm.agent_turn()
-                    turn = 1
-                print(self.tmm.board)
-        else:
-            while self.tmm.is_win() == 0:
-                if turn == 1:
-                    self.tmm.opp_turn()
-                    turn = 2
-                else:
-                    self.tmm.smart_agent_turn()
-                    turn = 1
-                print(self.tmm.board)
+        while self.tmm.is_win() == 0:
+            if turn == 1:
+                self.tmm.opp_turn()
+                turn = 2
+            else:
+                self.tmm.agent_turn()
+                turn = 1
+                #print(self.tmm.board)
 
     # run multiply games
-    def multiply_games(self):
+    def multiply_games(self, last_board=last_board, who_won=who_won):
         aggregated_dict = defaultdict(lambda: {'total_rank': 0, 'count': 0})
 
         for _ in range(self.amount_games):
-            if _ % 1 == 0:
+            if _ % 10000 == 0:
                 print(_)
             self.tmm = ThreeMensMorris()
             self.play_game()
+
             won = self.tmm.is_win()
             if won == 1:
                 self.opp_win_amount += 1
+                last_board += [self.tmm.board]
+                who_won += [1]
             elif won == 2:
                 self.agent_win_amount += 1
+                last_board += [self.tmm.board]
+                who_won += [0]
 
-        for board, rank in zip(states, states_scores):
+        last_board = np.array(last_board)
+        who_won = np.array(who_won)
+
+        np.save("x1.npy", last_board)
+        np.save("y1.npy", who_won)
+
+        """for board, rank in zip(states, states_scores):
             aggregated_dict[board]['total_rank'] += rank
             aggregated_dict[board]['count'] += 1
 
@@ -267,7 +270,7 @@ class Games:
                 board: [data['total_rank'] / data['count'], data['count']]
                 for board, data in aggregated_dict.items()
             },
-        }
+        }"""
 
 
 games = Games()  # creating a variable of running the games
