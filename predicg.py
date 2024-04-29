@@ -31,6 +31,10 @@ answer = model.predict([state])
 answer2 = model.predict([state2])
 answer3 = model.predict([state3])
 
-print(answer, "succeed?")
-print(answer2, "succeed?")
-print(answer3, "succeed?")
+print(answer)
+print(answer2)
+print(answer3)
+
+print(state)
+print(state2)
+print(state3)

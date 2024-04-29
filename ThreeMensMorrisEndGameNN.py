@@ -42,29 +42,6 @@ score_train = model.evaluate(x_train, y_train, verbose=0)
 print('Test loss:', score[0])
 print('Test accuracy:', score[1])
 
-state = np.array([[1, 1, 1],
-                  [0, -1, 0],
-                  [-1, 0, -1]])
-state2 = np.array([[-1, -1, -1],
-                  [0, 1, 0],
-                   [0, 1, 1]])
-state3 = np.array([[1, 0, -1],
-                  [1, -1, 0],
-                  [1, 0, -1]])
-
-state = state.reshape(-1, 3, 3)
-state = state.reshape((-1, 3, 3, 1))
-state2 = state2.reshape(-1, 3, 3)
-state2 = state2.reshape((-1, 3, 3, 1))
-state3 = state3.reshape(-1, 3, 3)
-state3 = state3.reshape((-1, 3, 3, 1))
-answer = model.predict([state])
-answer2 = model.predict([state2])
-answer3 = model.predict([state3])
-
-print(answer, "succeed?")
-print(answer2, "succeed?")
-print(answer3, "succeed?")
 print(history.history.keys())
 acc = history.history['accuracy']
 print("accuracy - train", score_train[1])
