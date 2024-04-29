@@ -15,13 +15,13 @@ y = keras.utils.to_categorical(y)
 x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=0)
 
 model = Sequential([
-    Conv2D(filters=128, kernel_size=(3, 3), input_shape=(3, 3, 1), activation='relu', padding='same'),
-    Conv2D(filters=64, kernel_size=(3, 3), input_shape=(3, 3, 1), activation='relu', padding='same'),
+    #Conv2D(filters=128, kernel_size=(3, 3), input_shape=(3, 3, 1), activation='relu', padding='same'),
+    Conv2D(filters=32, kernel_size=(3, 3), input_shape=(3, 3, 1), activation='tanh', padding='same'), # relu 64 before change
     Flatten(),
-    Dense(128, activation='relu'),
+    #Dense(128, activation='relu'),
     Dense(64, activation='tanh'),
-    Dense(16, activation='relu'),
-    Dense(units=2, activation='softmax')  # 3 output units for the three classes
+    #Dense(16, activation='relu'),
+    Dense(units=2, activation='softmax')  # 2 output units for the three classes
 ])
 model.compile(
       optimizer='Adam',
@@ -32,7 +32,7 @@ model.compile(
 history = model.fit(
       x=x_train,
       y=y_train,
-      epochs=10,
+      epochs=20,
       shuffle=True
    )
 
@@ -57,5 +57,5 @@ plt.title('Training  accuracy')
 plt.legend()
 plt.show()
 
-model.save('saved model.keras')
-model1 = keras.models.load_model('saved model.keras')
+model.save('saved model2.keras')
+model1 = keras.models.load_model('saved model2.keras')
