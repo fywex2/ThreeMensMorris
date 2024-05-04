@@ -1,15 +1,12 @@
 import numpy as np
 import json
 
-with open("dict.json", 'r') as fp:
+with open("dict2.json", 'r') as fp:
     existing_data = json.load(fp)
 
 # Extract values from the dictionary
-values_list = [value[0] for value in existing_data.values()]
+reshaped_array = np.array([np.array([int(char) for char in string]).reshape(3, 3) for string in existing_data.keys()])
+reshaped_array[reshaped_array == 2] = -1
 
-# Convert the list to a NumPy array
-array_of_values = np.array(values_list)
-
-print(array_of_values)
-# Save the array to a .npy file
-np.save('y_file.npy', array_of_values)
+print(reshaped_array)
+np.save('x_file.npy', reshaped_array)

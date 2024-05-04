@@ -1,5 +1,6 @@
 import numpy as np
 
-data = np.load("y1.npy")
+# Load the flattened numpy array from the .npy file
+num = np.load('y_file.npy')
+print(num)
 
-print(data)

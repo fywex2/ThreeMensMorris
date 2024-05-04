@@ -7,8 +7,8 @@ from keras.layers import Dense, Dropout, Conv2D, Flatten, MaxPooling2D
 import pandas as pd
 
 
-X = np.load("x1.npy")
-y = np.load("y1.npy")
+X = np.load("x_file.npy")
+y = np.load("y_file.npy")
 
 y = keras.utils.to_categorical(y)
 
@@ -57,5 +57,5 @@ plt.title('Training  accuracy')
 plt.legend()
 plt.show()
 
-model.save('saved model2.keras')
-model1 = keras.models.load_model('saved model2.keras')
+model.save('saved model3.keras')
+model1 = keras.models.load_model('saved model3.keras')

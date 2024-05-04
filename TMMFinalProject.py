@@ -4,9 +4,12 @@ from kivy.uix.button import Button
 from kivy.uix.popup import Popup
 from kivy.uix.label import Label
 from tensorflow import keras
+from kivy.uix.boxlayout import BoxLayout
 import numpy
 import json
 import random
+from kivy.core.window import Window
+from kivy.metrics import dp
 
 board_stats = {}  # Define board_stats as a global variable
 
@@ -16,44 +19,76 @@ class InstructionBoard(GridLayout):
         super().__init__(**kwargs)
         self.cols = 1  # Set the number of columns to the number of buttons
         self.rows = 20  # Adjusted rows to accommodate the instruction labels and "Next" button
-        self.add_widget(Label(text="Instructions", font_size=30))
-        self.add_widget(Label(text="1. Two players play against each other; one as 'X' and one as 'O', each player has 4 pieces.", font_size=20))
-        self.add_widget(Label(text="2. The game will choose randomly which player will start.", font_size=20))
-        self.add_widget(Label(text="3. Then every player in his turn will put one of his pieces on the board (A total of 8 zigzag turns between the players).", font_size=20))
-        self.add_widget(Label(text="4. After the 8 turns, If there is no decision, each player in turn will move one of his vessels to a place next to him that is empty.", font_size=20))
-        self.add_widget(Label(text="5. The game will end when one of the player will arrange all 4 of his pieces in a line, row or diagonal.", font_size=20))
-        self.add_widget(Label(text=" ", font_size=20))
-        self.add_widget(Label(text=" ", font_size=20))
-        self.add_widget(Label(text="Difficulty levels:", font_size=30))
-        self.add_widget(Label(text="1. Two players: one player against another player.", font_size=20))
-        self.add_widget(Label(text="2. Random computer, you will play against a random computer.", font_size=20))
-        self.add_widget(Label(text="3. Smart computer, you will play against a smart computer which using the data set.", font_size=20))
-        self.add_widget(Label(text="4. Neural network, you will play against a computer using neural network.", font_size=20))
-        self.add_widget(Label(text=" ", font_size=20))
-        self.add_widget(Label(text="5. Please choose the difficulty you want to play in from the buttons below.", font_size=20))
-        self.TwoPlayers_button = Button(text="Two Players", font_size=24, size_hint=(None, None), width=200, height=100)
-        self.RandomCompute_button = Button(text="Random Computer", font_size=24, size_hint=(None, None), width=200, height=100)
-        self.SmartComputer_button = Button(text="Smart Computer", font_size=24, size_hint=(None, None), width=200, height=100)
-        self.NeuralSystem_button = Button(text="Neural System", font_size=24, size_hint=(None, None), width=200, height=100)
+
+        # Add instruction labels
+        self.add_instruction_labels()
+
+        # Add difficulty level labels
+        self.add_difficulty_labels()
+
+        # Add buttons
+        self.add_buttons()
+
+    def add_instruction_labels(self):
+        self.add_widget(Label(text="Instructions", font_size=dp(30)))
+        self.add_widget(
+            Label(text="1. Two players play against each other; one as 'X' and one as 'O', each player has 3 pieces.",
+                  font_size=dp(20)))
+        self.add_widget(Label(text="2. The game will choose randomly which player will start.", font_size=dp(20)))
+        self.add_widget(Label(
+            text="3. Then every player in his turn will put one of his pieces on the board (A total of 6 zigzag turns between the players).",
+            font_size=dp(20)))
+        self.add_widget(Label(
+            text="4. After the 6 turns, If there is no decision, each player in turn will move one of his vessels to a place next to him that is empty.",
+            font_size=dp(20)))
+        self.add_widget(Label(
+            text="5. The game will end when one of the player will arrange all 3 of his pieces in a line, row or diagonal.",
+            font_size=dp(20)))
+        self.add_widget(Label(text=" ", font_size=dp(20)))
+        self.add_widget(Label(text=" ", font_size=dp(20)))
+
+    def add_difficulty_labels(self):
+        self.add_widget(Label(text="Difficulty levels:", font_size=dp(30)))
+        self.add_widget(Label(text="1. Two players: one player against another player.", font_size=dp(20)))
+        self.add_widget(Label(text="2. Random computer, you will play against a random computer.", font_size=dp(20)))
+        self.add_widget(
+            Label(text="3. Smart computer, you will play against a smart computer which using the data set.",
+                  font_size=dp(20)))
+        self.add_widget(
+            Label(text="4. Neural network, you will play against a computer using neural network.", font_size=dp(20)))
+        self.add_widget(Label(text=" ", font_size=dp(20)))
+        self.add_widget(
+            Label(text="5. Please choose the difficulty you want to play in from the buttons below.", font_size=dp(20)))
+
+    def add_buttons(self):
+        button_size = (dp(300), dp(200))  # Adjust button size as needed
+        self.TwoPlayers_button = Button(text="Two Players", font_size=dp(24), size_hint=(None, None), size=button_size)
+        self.RandomCompute_button = Button(text="Random Computer", font_size=dp(24), size_hint=(None, None),
+                                           size=button_size)
+        self.SmartComputer_button = Button(text="Smart Computer", font_size=dp(24), size_hint=(None, None),
+                                           size=button_size)
+        self.NeuralSystem_button = Button(text="Neural System", font_size=dp(24), size_hint=(None, None),
+                                          size=button_size)
+
+        # Add buttons to the layout
         self.add_widget(self.TwoPlayers_button)
         self.add_widget(self.RandomCompute_button)
         self.add_widget(self.SmartComputer_button)
         self.add_widget(self.NeuralSystem_button)
 
-
 class TwoPlayers(GridLayout):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.rows = 5
-        self.cols = 5
+        self.rows = 3
+        self.cols = 3
         self.buttons = []
         self.all_pieces_placed = False
         self.selected_piece = None
-        self.remaining_pieces = {'X': 4, 'O': 4}
+        self.remaining_pieces = {'X': 3, 'O': 3}
         self.current_player = random.choice(['X', 'O'])  # Randomly choose starting player
 
-        for i in range(25):
-            button = Button(text='', font_size=24, size_hint=(None, None), width=100, height=100)
+        for i in range(9):
+            button = Button(text='', font_size=24, size_hint=(None, None), width=300, height=300)
             button.bind(on_press=self.on_button_click)
             self.buttons.append(button)
             self.add_widget(button)
@@ -130,30 +165,28 @@ class TwoPlayers(GridLayout):
                     self.show_message('Error', 'You can only move your piece to an empty position.')
 
     def available_positions_to(self, from_index):
-        row = from_index // 5
-        col = from_index % 5
+        row = from_index // 3
+        col = from_index % 3
 
         nearby_places = []
 
-        for i in range(max(0, row - 1), min(5, row + 2)):
-            for j in range(max(0, col - 1), min(5, col + 2)):
-                nearby_index = i * 5 + j
+        for i in range(max(0, row - 1), min(3, row + 2)):
+            for j in range(max(0, col - 1), min(3, col + 2)):
+                nearby_index = i * 3 + j
                 if self.is_valid_index(nearby_index) and self.buttons[nearby_index].text == '':
                     nearby_places.append(nearby_index)
 
         return nearby_places
 
     def is_valid_index(self, index):
-        return 0 <= index < 25
+        return 0 <= index < 9
 
     def check_winner(self, symbol):
-        winning_combinations = [(0, 1, 2, 3), (1, 2, 3, 4), (5, 6, 7, 8), (6, 7, 8, 9), (10, 11, 12, 13),
-                                (11, 12, 13, 14), (15, 16, 17, 18), (16, 17, 18, 19), (20, 21, 22, 23),
-                                (21, 22, 23, 24),
-                                (0, 5, 10, 15), (1, 6, 11, 16), (2, 7, 12, 17), (3, 8, 13, 18), (4, 9, 14, 19),
-                                (5, 10, 15, 20), (6, 11, 16, 21), (7, 12, 17, 22), (8, 13, 18, 23), (9, 14, 19, 24),
-                                (0, 6, 12, 18), (6, 12, 18, 24), (3, 11, 17, 23), (1, 7, 13, 19),
-                                (4, 8, 12, 16), (8, 12, 16, 20), (9, 13, 17, 21), (3, 7, 11, 15)]
+        winning_combinations = [
+            (0, 1, 2), (3, 4, 5), (6, 7, 8),  # Rows
+            (0, 3, 6), (1, 4, 7), (2, 5, 8),  # Columns
+            (0, 4, 8), (2, 4, 6)  # Diagonals
+        ]
         for combination in winning_combinations:
             if all(self.buttons[i].text == symbol for i in combination):
                 return True  # Found a winning combination
@@ -167,16 +200,16 @@ class TwoPlayers(GridLayout):
 class RandomComputer(GridLayout):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.rows = 5
-        self.cols = 5
+        self.rows = 3
+        self.cols = 3
         self.buttons = []
         self.all_pieces_placed = False
         self.selected_piece = None
-        self.remaining_pieces = {'X': 4, 'O': 3}
+        self.remaining_pieces = {'X': 3, 'O': 2}
         self.current_player = 'X'
 
-        for i in range(25):
-            button = Button(text='', font_size=24, size_hint=(None, None), width=100, height=100)
+        for i in range(9):
+            button = Button(text='', font_size=24, size_hint=(None, None), width=300, height=300)
             button.bind(on_press=self.on_button_click)
             self.buttons.append(button)
             self.add_widget(button)
@@ -314,31 +347,28 @@ class RandomComputer(GridLayout):
                     self.current_player = 'X'
 
     def available_positions_to(self, from_index):
-        row = from_index // 5
-        col = from_index % 5
+        row = from_index // 3
+        col = from_index % 3
 
         nearby_places = []
 
-        for i in range(max(0, row - 1), min(5, row + 2)):
-            for j in range(max(0, col - 1), min(5, col + 2)):
-                nearby_index = i * 5 + j
+        for i in range(max(0, row - 1), min(3, row + 2)):
+            for j in range(max(0, col - 1), min(3, col + 2)):
+                nearby_index = i * 3 + j
                 if self.is_valid_index(nearby_index) and self.buttons[nearby_index].text == '':
                     nearby_places.append(nearby_index)
 
         return nearby_places
 
     def is_valid_index(self, index):
-        return 0 <= index < 25
+        return 0 <= index < 9
 
     def check_winner(self, symbol):
-
-        winning_combinations = [(0, 1, 2, 3), (1, 2, 3, 4), (5, 6, 7, 8), (6, 7, 8, 9), (10, 11, 12, 13),
-                                (11, 12, 13, 14), (15, 16, 17, 18), (16, 17, 18, 19), (20, 21, 22, 23),
-                                (21, 22, 23, 24),
-                                (0, 5, 10, 15), (1, 6, 11, 16), (2, 7, 12, 17), (3, 8, 13, 18), (4, 9, 14, 19),
-                                (5, 10, 15, 20), (6, 11, 16, 21), (7, 12, 17, 22), (8, 13, 18, 23), (9, 14, 19, 24),
-                                (0, 6, 12, 18), (6, 12, 18, 24), (3, 11, 17, 23), (1, 7, 13, 19),
-                                (4, 8, 12, 16), (8, 12, 16, 20), (9, 13, 17, 21), (3, 7, 11, 15)]
+        winning_combinations = [
+            (0, 1, 2), (3, 4, 5), (6, 7, 8),  # Rows
+            (0, 3, 6), (1, 4, 7), (2, 5, 8),  # Columns
+            (0, 4, 8), (2, 4, 6)  # Diagonals
+        ]
         for combination in winning_combinations:
             if all(self.buttons[i].text == symbol for i in combination):
                 return True  # Found a winning combination
@@ -353,18 +383,18 @@ class SmartComputer(GridLayout):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.load_from_json()
-        self.rows = 5
-        self.cols = 5
+        self.rows = 3
+        self.cols = 3
         self.buttons = []
         self.all_pieces_placed = False
         self.selected_piece = None
-        self.remaining_pieces = {'X': 4, 'O': 3}
+        self.remaining_pieces = {'X': 3, 'O': 2}
         self.current_player = 'X'
-        self.game_board = "0000000000000000000000000"
+        self.game_board = "000000000"
         self.game_board_history = [self.game_board]
 
-        for i in range(25):
-            button = Button(text='', font_size=24, size_hint=(None, None), width=100, height=100)
+        for i in range(9):
+            button = Button(text='', font_size=24, size_hint=(None, None), width=300, height=300)
             button.bind(on_press=self.on_button_click)
             self.buttons.append(button)
             self.add_widget(button)
@@ -462,6 +492,7 @@ class SmartComputer(GridLayout):
                 score = 0
             else:
                 score, _ = board_stats[next_board]
+            print(next_board, score)
             if score > max_score:
                 max_score = score
                 best_position = position
@@ -535,49 +566,47 @@ class SmartComputer(GridLayout):
     def max_count_in_line(self, board, symbol):
         max_count = 0
         for i in range(len(board)):
-            row, col = divmod(i, 5)
+            row, col = divmod(i, 3)
             # Check horizontal line
-            count = sum(1 for j in range(5) if board[row * 5 + j] == symbol)
+            count = sum(1 for j in range(3) if board[row * 3 + j] == symbol)
             max_count = max(max_count, count)
             # Check vertical line
-            count = sum(1 for j in range(5) if board[j * 5 + col] == symbol)
+            count = sum(1 for j in range(3) if board[j * 3 + col] == symbol)
             max_count = max(max_count, count)
             # Check main diagonal
             if row == col:
-                count = sum(1 for j in range(5) if board[j * 5 + j] == symbol)
+                count = sum(1 for j in range(3) if board[j * 3 + j] == symbol)
                 max_count = max(max_count, count)
             # Check anti-diagonal
-            if row + col == 4:
-                count = sum(1 for j in range(5) if board[j * 5 + (4 - j)] == symbol)
+            if row + col == 2:
+                count = sum(1 for j in range(3) if board[j * 3 + (2 - j)] == symbol)
                 max_count = max(max_count, count)
         return max_count
 
 
     def available_positions_to(self, from_index):
-        row = from_index // 5
-        col = from_index % 5
+        row = from_index // 3
+        col = from_index % 3
 
         nearby_places = []
 
-        for i in range(max(0, row - 1), min(5, row + 2)):
-            for j in range(max(0, col - 1), min(5, col + 2)):
-                nearby_index = i * 5 + j
+        for i in range(max(0, row - 1), min(3, row + 2)):
+            for j in range(max(0, col - 1), min(3, col + 2)):
+                nearby_index = i * 3 + j
                 if self.is_valid_index(nearby_index) and self.buttons[nearby_index].text == '':
                     nearby_places.append(nearby_index)
 
         return nearby_places
 
     def is_valid_index(self, index):
-        return 0 <= index < 25
+        return 0 <= index < 9
 
     def check_winner(self, symbol):
-        winning_combinations = [(0, 1, 2, 3), (1, 2, 3, 4), (5, 6, 7, 8), (6, 7, 8, 9), (10, 11, 12, 13),
-                                (11, 12, 13, 14), (15, 16, 17, 18), (16, 17, 18, 19), (20, 21, 22, 23),
-                                (21, 22, 23, 24),
-                                (0, 5, 10, 15), (1, 6, 11, 16), (2, 7, 12, 17), (3, 8, 13, 18), (4, 9, 14, 19),
-                                (5, 10, 15, 20), (6, 11, 16, 21), (7, 12, 17, 22), (8, 13, 18, 23), (9, 14, 19, 24),
-                                (0, 6, 12, 18), (6, 12, 18, 24), (3, 11, 17, 23), (1, 7, 13, 19),
-                                (4, 8, 12, 16), (8, 12, 16, 20), (9, 13, 17, 21), (3, 7, 11, 15)]
+        winning_combinations = [
+            (0, 1, 2), (3, 4, 5), (6, 7, 8),  # Rows
+            (0, 3, 6), (1, 4, 7), (2, 5, 8),  # Columns
+            (0, 4, 8), (2, 4, 6)  # Diagonals
+        ]
 
         for combo in winning_combinations:
             if all(self.game_board[i] == symbol for i in combo):
@@ -586,7 +615,7 @@ class SmartComputer(GridLayout):
 
     def load_from_json(self):
         global board_stats  # Use the global board_stats variable
-        board_stats_file = "board_stats.json"
+        board_stats_file = "dict2.json"
         try:
             with open(board_stats_file, 'r') as json_file:
                 board_stats = json.load(json_file)
@@ -604,18 +633,18 @@ class SmartComputer(GridLayout):
 class NeuralSystem(GridLayout):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.rows = 5
-        self.cols = 5
+        self.rows = 3
+        self.cols = 3
         self.buttons = []
         self.all_pieces_placed = False
         self.selected_piece = None
-        self.remaining_pieces = {'X': 4, 'O': 3}
+        self.remaining_pieces = {'X': 3, 'O': 2}
         self.current_player = 'X'
-        self.game_board = "0000000000000000000000000"
+        self.game_board = "000000000"
         self.game_board_history = [self.game_board]
 
-        for i in range(25):
-            button = Button(text='', font_size=24, size_hint=(None, None), width=100, height=100)
+        for i in range(9):
+            button = Button(text='', font_size=24, size_hint=(None, None), width=300, height=300)
             button.bind(on_press=self.on_button_click)
             self.buttons.append(button)
             self.add_widget(button)
@@ -707,7 +736,7 @@ class NeuralSystem(GridLayout):
         best_position = None
         max_score = -1
         model2 = keras.models.load_model('saved model2.keras')
-        two_dimensional_array = numpy.zeros((5, 5), int)
+        two_dimensional_array = numpy.zeros((3, 3), int)
 
         for position in available_positions:
             next_board = self.game_board[:position] + "O" + self.game_board[position + 1:]
@@ -715,8 +744,149 @@ class NeuralSystem(GridLayout):
             k = 0
             j = 0
             i = 0
-            while i < 25:
+            while i < 9:
                 if (next_board[i] == 'X'):
                     two_dimensional_array[k][j] = 1
                 elif (next_board[i] == 'O'):
                     two_dimensional_array[k][j] = -1
+                elif (next_board[i] == '0'):
+                    two_dimensional_array[k][j] = 0
+                i += 1
+                j += 1
+                if (i % 3 == 0):
+                    j = 0
+                    k += 1
+
+            reshaped_data = two_dimensional_array.reshape(1, 3, 3, 1)
+            score = model2.predict(reshaped_data)
+            if score > max_score:
+                max_score = score
+                best_position = position
+
+        self.buttons[best_position].text = 'O'
+        self.update_board(best_position, "O")
+
+        if self.check_winner("O"):
+            self.show_message('OutMatched!', 'computer wins!')
+        else:
+            # Switch current player
+            self.current_player = 'X'
+
+    def play_best_position(self):
+        available_positions = [i for i, char in enumerate(self.game_board) if char == "O"]
+
+        best_position = None
+        max_score = -1
+        from_index = 0
+        model3 = keras.models.load_model('saved model2.keras')
+        two_dimensional_array = numpy.zeros((3, 3), int)
+        for position in available_positions:
+            nearby_places = self.available_positions_to(position)
+            for pos in nearby_places:
+                nex_board = self.game_board[:position] + "0" + self.game_board[position + 1:]
+                next_board = nex_board[:pos] + "O" + nex_board[pos + 1:]
+
+                k = 0
+                j = 0
+                i = 0
+
+                while i < 9:
+                    if (next_board[i] == 'X'):
+                        two_dimensional_array[k][j] = 1
+                    elif (next_board[i] == 'O'):
+                        two_dimensional_array[k][j] = -1
+                    elif (next_board[i] == '0'):
+                        two_dimensional_array[k][j] = 0
+                    i += 1
+                    j += 1
+                    if (i % 3 == 0):
+                        j = 0
+                        k += 1
+
+                reshaped_data = two_dimensional_array.reshape(1, 3, 3, 1)
+                score = model2.predict(reshaped_data)
+                if score > max_score:
+                    from_index = position
+                    max_score = score
+                    best_position = pos
+
+        self.buttons[from_index].text = ''
+        self.buttons[best_position].text = 'O'
+        self.update_board(from_index, '0')
+        self.update_board(best_position, "O")
+
+        if self.check_winner("O"):
+            self.show_message('OutMatched!', 'computer wins!')
+        else:
+            # Switch current player
+            self.current_player = 'X'
+
+    def available_positions_to(self, from_index):
+        row = from_index // 3
+        col = from_index % 3
+
+        nearby_places = []
+
+        for i in range(max(0, row - 1), min(3, row + 2)):
+            for j in range(max(0, col - 1), min(3, col + 2)):
+                nearby_index = i * 3 + j
+                if self.is_valid_index(nearby_index) and self.buttons[nearby_index].text == '':
+                    nearby_places.append(nearby_index)
+
+        return nearby_places
+
+    def is_valid_index(self, index):
+        return 0 <= index < 9
+
+    def check_winner(self, symbol):
+        winning_combinations = [
+            (0, 1, 2), (3, 4, 5), (6, 7, 8),  # Rows
+            (0, 3, 6), (1, 4, 7), (2, 5, 8),  # Columns
+            (0, 4, 8), (2, 4, 6)  # Diagonals
+        ]
+
+        for combo in winning_combinations:
+            if all(self.game_board[i] == symbol for i in combo):
+                return True
+        return False
+
+    def update_board(self, index, symbol):
+        self.game_board = self.game_board[:index] + symbol + self.game_board[index + 1:]
+        self.game_board_history.append(self.game_board)
+
+    def show_message(self, title, message):
+        Popup(title=title, content=Label(text=message), size_hint=(None, None), size=(400, 200)).open()
+
+
+class TMMApp(App):
+    def build(self):
+            self.instructionboard = InstructionBoard()
+            self.instructionboard.TwoPlayers_button.bind(on_press=self.start_twoplayers)
+            self.instructionboard.RandomCompute_button.bind(on_press=self.start_random)
+            self.instructionboard.SmartComputer_button.bind(on_press=self.start_smart)
+            self.instructionboard.NeuralSystem_button.bind(on_press=self.start_neural)
+            return self.instructionboard
+
+    def start_twoplayers(self, instance):
+        self.root.clear_widgets()
+        self.root.add_widget(TwoPlayers())
+
+    def start_random(self, instance):
+        self.root.clear_widgets()
+        self.root.add_widget(RandomComputer())
+
+    def start_smart(self, instance):
+        self.root.clear_widgets()
+        self.root.add_widget(SmartComputer())
+
+    def start_neural(self, instance):
+        self.root.clear_widgets()
+        self.root.add_widget(NeuralSystem())
+
+    def on_start(self):
+        # Open the window in full screen
+        Window.fullscreen = 'auto'
+
+
+if __name__ == '__main__':
+    TMMApp().run()
