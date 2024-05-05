@@ -5,7 +5,7 @@ import numpy as np
 import json
 import copy
 
-with open("dict2.json", 'r') as fp:
+with open("dict.json", 'r') as fp:
     existing_data = json.load(fp)
 states = []
 states_scores = []
@@ -79,6 +79,7 @@ class ThreeMensMorris:
         return 0  # No winner yet
 
     def agent_turn(self):
+        curr_board = copy.deepcopy(self.board)
         if self.num_agent_pieces > 0:
             row, col = random.choice(self.legal_phase1())
             self.board[row][col] = 1
@@ -92,10 +93,11 @@ class ThreeMensMorris:
             row2, col2 = random.choice(self.legal_phase2([row1, col1]))
             self.board[row2][col2] = 1
 
-        self.rank_board_state()
+        self.rank_board_state(curr_board)
         self.num_moves += 1
 
     def opp_turn(self):
+        curr_board = copy.deepcopy(self.board)
         if self.num_opp_pieces > 0:
             row, col = random.choice(self.legal_phase1())
             self.board[row][col] = 2
@@ -109,7 +111,7 @@ class ThreeMensMorris:
             row2, col2 = random.choice(self.legal_phase2([row1, col1]))
             self.board[row2][col2] = 2
 
-        self.rank_board_state()
+        self.rank_board_state(curr_board)
         self.num_moves += 1
 
 
@@ -129,16 +131,50 @@ class ThreeMensMorris:
 
     # the def will give points to every board in this game
     # every list will have 2 cell of the board and the points the board got in the game
-    def rank_board_state(self):
+    def rank_board_state(self, prevboard):
         rank = self.gama ** self.num_moves
         if self.is_win() == 2:
             rank = self.loss_points_agent
         if self.is_win() == 1:
             rank = self.win_points_agent
+        if self.is_block(copy.deepcopy(self.board), prevboard):
+            rank = self.gama ** (self.num_moves-1) * 0.95
 
         rank = float(rank)
         states.append(flatten_list(self.board))
         states_scores.append(rank)
+
+    def is_block(self, board, prev_board):
+        # Define winning combinations
+        #print(prev_board)
+        #print(board,"\n")
+        winning_combinations = [
+            [(0, 0), (0, 1), (0, 2)],  # Row 1
+            [(1, 0), (1, 1), (1, 2)],  # Row 2
+            [(2, 0), (2, 1), (2, 2)],  # Row 3
+            [(0, 0), (1, 0), (2, 0)],  # Column 1
+            [(0, 1), (1, 1), (2, 1)],  # Column 2
+            [(0, 2), (1, 2), (2, 2)],  # Column 3
+            [(0, 0), (1, 1), (2, 2)],  # Diagonal \
+            [(0, 2), (1, 1), (2, 0)]  # Diagonal /
+        ]
+
+        for combination in winning_combinations:
+            x_count = 0
+            empty_spot = None
+            for cell in combination:
+                if prev_board[cell[0]][cell[1]] == 2:
+                    x_count += 1
+                elif prev_board[cell[0]][cell[1]] == 0:
+                    empty_spot = cell
+
+            # If there are two X's and one empty spot in a combination
+            if x_count == 2 and empty_spot and prev_board[empty_spot[0]][empty_spot[1]] == 0:
+                # Check if O blocked the empty spot
+                if board[empty_spot[0]][empty_spot[1]] == 1:
+                    return True  # Block found, return True
+
+        return False  # No block found in any combination
 
 class Games:
     def __init__(self):
@@ -187,7 +223,7 @@ games = Games()
 
 dict_result = games.multiply_games()
 final_dict = dict(existing_data, **dict_result)
-with open("dict2.json", "w") as fp:
+with open("dict.json", "w") as fp:
     json.dump(final_dict, fp)
 
 print(f"agent wins:{games.agent_win_amount}")

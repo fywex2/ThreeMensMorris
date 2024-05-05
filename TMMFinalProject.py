@@ -20,45 +20,8 @@ class InstructionBoard(GridLayout):
         self.cols = 1  # Set the number of columns to the number of buttons
         self.rows = 20  # Adjusted rows to accommodate the instruction labels and "Next" button
 
-        # Add instruction labels
-        self.add_instruction_labels()
-
-        # Add difficulty level labels
-        self.add_difficulty_labels()
-
         # Add buttons
         self.add_buttons()
-
-    def add_instruction_labels(self):
-        self.add_widget(Label(text="Instructions", font_size=dp(30)))
-        self.add_widget(
-            Label(text="1. Two players play against each other; one as 'X' and one as 'O', each player has 3 pieces.",
-                  font_size=dp(20)))
-        self.add_widget(Label(text="2. The game will choose randomly which player will start.", font_size=dp(20)))
-        self.add_widget(Label(
-            text="3. Then every player in his turn will put one of his pieces on the board (A total of 6 zigzag turns between the players).",
-            font_size=dp(20)))
-        self.add_widget(Label(
-            text="4. After the 6 turns, If there is no decision, each player in turn will move one of his vessels to a place next to him that is empty.",
-            font_size=dp(20)))
-        self.add_widget(Label(
-            text="5. The game will end when one of the player will arrange all 3 of his pieces in a line, row or diagonal.",
-            font_size=dp(20)))
-        self.add_widget(Label(text=" ", font_size=dp(20)))
-        self.add_widget(Label(text=" ", font_size=dp(20)))
-
-    def add_difficulty_labels(self):
-        self.add_widget(Label(text="Difficulty levels:", font_size=dp(30)))
-        self.add_widget(Label(text="1. Two players: one player against another player.", font_size=dp(20)))
-        self.add_widget(Label(text="2. Random computer, you will play against a random computer.", font_size=dp(20)))
-        self.add_widget(
-            Label(text="3. Smart computer, you will play against a smart computer which using the data set.",
-                  font_size=dp(20)))
-        self.add_widget(
-            Label(text="4. Neural network, you will play against a computer using neural network.", font_size=dp(20)))
-        self.add_widget(Label(text=" ", font_size=dp(20)))
-        self.add_widget(
-            Label(text="5. Please choose the difficulty you want to play in from the buttons below.", font_size=dp(20)))
 
     def add_buttons(self):
         button_size = (dp(300), dp(200))  # Adjust button size as needed
@@ -883,9 +846,9 @@ class TMMApp(App):
         self.root.clear_widgets()
         self.root.add_widget(NeuralSystem())
 
-    def on_start(self):
+    #def on_start(self):
         # Open the window in full screen
-        Window.fullscreen = 'auto'
+        #Window.fullscreen = 'auto'
 
 
 if __name__ == '__main__':
