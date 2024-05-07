@@ -721,7 +721,8 @@ class NeuralSystem(GridLayout):
                     k += 1
 
             reshaped_data = two_dimensional_array.reshape(1, 3, 3, 1)
-            score = model2.predict(reshaped_data)
+            score = model2.predict(reshaped_data)[0][0]
+            print(score)
             if score > max_score:
                 max_score = score
                 best_position = position
@@ -741,7 +742,7 @@ class NeuralSystem(GridLayout):
         best_position = None
         max_score = -1
         from_index = 0
-        model3 = keras.models.load_model('saved model2.keras')
+        model2 = keras.models.load_model('saved model2.keras')
         two_dimensional_array = numpy.zeros((3, 3), int)
         for position in available_positions:
             nearby_places = self.available_positions_to(position)
@@ -767,7 +768,7 @@ class NeuralSystem(GridLayout):
                         k += 1
 
                 reshaped_data = two_dimensional_array.reshape(1, 3, 3, 1)
-                score = model2.predict(reshaped_data)
+                score = model2.predict(reshaped_data)[0][0]
                 if score > max_score:
                     from_index = position
                     max_score = score
