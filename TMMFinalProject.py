@@ -822,7 +822,7 @@ class NeuralSystem(GridLayout):
         Popup(title=title, content=Label(text=message), size_hint=(None, None), size=(400, 200)).open()
 
 
-class TMMApp(App):
+class ThreeMensMorris(App):
     def build(self):
             self.instructionboard = InstructionBoard()
             self.instructionboard.TwoPlayers_button.bind(on_press=self.start_twoplayers)
@@ -853,4 +853,4 @@ class TMMApp(App):
 
 
 if __name__ == '__main__':
-    TMMApp().run()
+    ThreeMensMorris().run()
