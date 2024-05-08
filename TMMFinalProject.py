@@ -847,9 +847,9 @@ class TMMApp(App):
         self.root.clear_widgets()
         self.root.add_widget(NeuralSystem())
 
-    #def on_start(self):
+    def on_start(self):
         # Open the window in full screen
-        #Window.fullscreen = 'auto'
+        Window.fullscreen = 'auto'
 
 
 if __name__ == '__main__':
