@@ -27,7 +27,7 @@ class ThreeMensMorris:
         self.win_points_agent = 1  # it is recommended to give 1 or 10
         self.loss_points_agent = 0
         self.all_boards_in_game = []  # only number sting
-        self.gama = 0.9  # he called discorent how much down we want to get between board (0.9 to 1)
+        self.gama = 0.7  # he called discorent how much down we want to get between board (0.9 to 1)
         self.num_agent_pieces = 3
         self.num_opp_pieces = 3
         self.phase2_close = {
@@ -138,7 +138,7 @@ class ThreeMensMorris:
         if self.is_win() == 1:
             rank = self.win_points_agent
         if self.is_block(copy.deepcopy(self.board), prevboard):
-            rank = self.gama ** (self.num_moves-1) * 0.95
+            rank = self.gama ** (self.num_moves-1) * 0.99
 
         rank = float(rank)
         states.append(flatten_list(self.board))

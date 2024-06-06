@@ -11,7 +11,7 @@ def string_to_3x3_array(s):
 
 # Function to replace 2 with -1 in a 3x3 array
 def replace_2_with_minus_1(arr):
-    arr[arr == 2] = -1
+
     return arr
 
 # Convert each string in keys to a 3x3 array of integers and replace 2 with -1

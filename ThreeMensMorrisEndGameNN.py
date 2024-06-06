@@ -7,21 +7,19 @@ from keras.layers import Dense, Dropout, Conv2D, Flatten, MaxPooling2D
 import pandas as pd
 
 
-X = np.load("x2_file.npy")
+X = np.load("x_file.npy")
 y = np.load("y_file.npy")
-
-y = keras.utils.to_categorical(y)
 
 x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=0)
 
 model = Sequential([
-    #Conv2D(filters=128, kernel_size=(3, 3), input_shape=(3, 3, 1), activation='relu', padding='same'),
     Conv2D(filters=64, kernel_size=(3, 3), input_shape=(3, 3, 1), activation='relu', padding='same'),
     Flatten(),
-    Dense(128, activation='relu'),
+    Dense(258, activation='relu'),
     Dense(64, activation='tanh'),
     Dense(16, activation='relu'),
-    Dense(units=2, activation='softmax')  # 2 output units for the two classes
+    Dense(8, activation='relu'),
+    Dense(units=1, activation='tanh'),
 ])
 model.compile(
       optimizer='Adam',
@@ -56,5 +54,8 @@ plt.plot(epochs, acc, 'bo', label='Training acc')
 plt.title('Training  accuracy')
 plt.legend()
 plt.show()
+
+model.save('saved model2.keras')
+
 
 

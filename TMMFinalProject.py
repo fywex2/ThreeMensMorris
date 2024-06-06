@@ -25,6 +25,20 @@ class InstructionBoard(GridLayout):
 
     def add_buttons(self):
         button_size = (dp(300), dp(200))  # Adjust button size as needed
+        self.add_widget(Label(text="Instructions", font_size=30))
+        self.add_widget(Label(text="Two players play against each other; one as 'X' and one as 'O', each player has 3 pieces.",font_size=20))
+        self.add_widget(Label(text="Every player in his turn will put one of his pieces on the board (A total of 6 turns between the players).",font_size=20))
+        self.add_widget(Label(text="After the 6 turns, If there is no winner, each player in his turn will move one of his vessels to a place next to him that is empty.",font_size=20))
+        self.add_widget(Label(text="The game will end when one of the player will arrange all 3 of his pieces in a line, row or diagonal.",font_size=20))
+        self.add_widget(Label(text=" ", font_size=20))
+        self.add_widget(Label(text=" ", font_size=20))
+        self.add_widget(Label(text="Difficulty levels:", font_size=30))
+        self.add_widget(Label(text="Two players: one player against another player.", font_size=20))
+        self.add_widget(Label(text="Random computer, you will play against a random computer.", font_size=20))
+        self.add_widget(Label(text="Smart computer, you will play against a smart computer which using the data set.",font_size=20))
+        self.add_widget(Label(text="Neural network, you will play against a computer using neural network.", font_size=20))
+        self.add_widget(Label(text=" ", font_size=20))
+        self.add_widget(Label(text="Please choose the difficulty you want to play in from the buttons below.", font_size=20))
         self.TwoPlayers_button = Button(text="Two Players", font_size=dp(24), size_hint=(None, None), size=button_size)
         self.RandomCompute_button = Button(text="Random Computer", font_size=dp(24), size_hint=(None, None),
                                            size=button_size)
@@ -709,9 +723,9 @@ class NeuralSystem(GridLayout):
             i = 0
             while i < 9:
                 if (next_board[i] == 'X'):
-                    two_dimensional_array[k][j] = 1
+                    two_dimensional_array[k][j] = 2
                 elif (next_board[i] == 'O'):
-                    two_dimensional_array[k][j] = -1
+                    two_dimensional_array[k][j] = 1
                 elif (next_board[i] == '0'):
                     two_dimensional_array[k][j] = 0
                 i += 1
@@ -756,9 +770,9 @@ class NeuralSystem(GridLayout):
 
                 while i < 9:
                     if (next_board[i] == 'X'):
-                        two_dimensional_array[k][j] = 1
+                        two_dimensional_array[k][j] = 2
                     elif (next_board[i] == 'O'):
-                        two_dimensional_array[k][j] = -1
+                        two_dimensional_array[k][j] = 1
                     elif (next_board[i] == '0'):
                         two_dimensional_array[k][j] = 0
                     i += 1

@@ -1,7 +1,7 @@
 import numpy as np
 import json
 
-with open("dict2.json", 'r') as fp:
+with open("dict.json", 'r') as fp:
     existing_data = json.load(fp)
 
 # Extract values from the dictionary
