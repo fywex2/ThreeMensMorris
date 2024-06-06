@@ -99,8 +99,6 @@ plt.legend()
 plt.show()
 
 # save and load model
-model.save('saved model.keras')
-model1 = keras.models.load_model('saved model.keras')
 
 #answer1 = model1.predict(np.array([1,0,2,0,1,2,0,0,1]).reshape(-1, 1).T)
 #print("[1,0,2,0,1,2,0,0,1] from saved  model",answer1)

@@ -57,5 +57,4 @@ plt.title('Training  accuracy')
 plt.legend()
 plt.show()
 
-model.save('saved model2.keras')
-model1 = keras.models.load_model('saved model2.keras')
+
